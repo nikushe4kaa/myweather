@@ -1,0 +1,34 @@
+const apiKey = 'b58c23d334ec4049ea5996ea34106952'; // Твій ключ API
+const city = 'Arona,ES'; // Місто Арона, Іспанія
+
+const weatherDiv = document.getElementById('weather');
+const errorDiv = document.getElementById('error');
+const button = document.getElementById('getWeatherBtn');
+
+button.addEventListener('click', () => {
+  weatherDiv.textContent = 'Завантаження...';
+  errorDiv.textContent = '';
+
+  fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=uk`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Місто не знайдено або помилка мережі');
+      }
+      return response.json();
+    })
+    .then(data => {
+      const temp = data.main.temp;
+      const humidity = data.main.humidity;
+      const windSpeed = data.wind.speed;
+
+      weatherDiv.innerHTML = `
+        <p>Температура: <strong>${temp}°C</strong></p>
+        <p>Вологість: <strong>${humidity}%</strong></p>
+        <p>Швидкість вітру: <strong>${windSpeed} м/с</strong></p>
+      `;
+    })
+    .catch(error => {
+      weatherDiv.textContent = '';
+      errorDiv.textContent = error.message;
+    });
+});
